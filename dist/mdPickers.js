@@ -349,7 +349,7 @@ function formatValidator(value, format) {
 }
 
 function minDateValidator(value, format, minDate) {
-    var minDate = angular.isDate(minDate) ? minDate : moment(minDate, "YYYY-MM-DD", true);
+    var minDate = angular.isDate(minDate) ? moment(minDate) : moment(minDate, "YYYY-MM-DD", true);
     var date = angular.isDate(value) ? moment(value) :  moment(value, format);
     
     return !value || 
