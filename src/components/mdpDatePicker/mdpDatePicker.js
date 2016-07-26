@@ -138,11 +138,15 @@ module.provider("$mdpDatePicker", function() {
                                             '</div>' +
                                         '</md-virtual-repeat-container>' +
                                     '</div>' +
-                                    '<mdp-calendar ng-if="!datepicker.selectingYear" class="mdp-animation-zoom" date="datepicker.date" min-date="datepicker.minDate" date-filter="datepicker.dateFilter" max-date="datepicker.maxDate"></mdp-calendar>' +
+                                    '<mdp-calendar ng-if="!datepicker.selectingYear" class="mdp-animation-zoom" date="datepicker.date"' +
+                                                  'max-date="datepicker.maxDate"' +
+                                                  'min-date="datepicker.minDate"' +
+                                                  (options.closeOnSelect? 'close-on-select="datepicker.confirm()"':'')+
+                                                  'date-filter="datepicker.dateFilter"></mdp-calendar>' +
                                     '<md-dialog-actions layout="row">' +
                                     	'<span flex></span>' +
-                                        '<md-button ng-click="datepicker.cancel()" aria-label="' + LABEL_CANCEL + '">' + LABEL_CANCEL + '</md-button>' +
-                                        '<md-button ng-click="datepicker.confirm()" class="md-primary" aria-label="' + LABEL_OK + '">' + LABEL_OK + '</md-button>' +
+                                        (options.closeOnSelect? '' : '<md-button ng-click="datepicker.cancel()" aria-label="' + LABEL_CANCEL + '">' + LABEL_CANCEL + '</md-button>') +
+                                        (options.closeOnSelect? '' : '<md-button ng-click="datepicker.confirm()" class="md-primary" aria-label="' + LABEL_OK + '">' + LABEL_OK + '</md-button>') +
                                     '</md-dialog-actions>' +
                                 '</div>' +
                             '</md-dialog-content>' +
@@ -212,6 +216,9 @@ function CalendarCtrl($scope) {
     
     this.selectDate = function(dom) {
         self.date.date(dom);
+        if(self.closeOnSelect){
+            self.closeOnSelect()
+        }
     };
 
     this.nextMonth = function() {
@@ -241,7 +248,8 @@ module.directive("mdpCalendar", ["$animate", function($animate) {
             "date": "=",
             "minDate": "=",
             "maxDate": "=",
-            "dateFilter": "="
+            "dateFilter": "=",
+            "closeOnSelect": "&?"
         },
         template: '<div class="mdp-calendar">' +
                     '<div layout="row" layout-align="space-between center">' +
@@ -353,7 +361,8 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
             "placeholder": "@mdpPlaceholder",
             "noFloat": "=mdpNoFloat",
             "openOnClick": "=mdpOpenOnClick",
-            "disabled": "=?mdpDisabled"
+            "disabled": "=?mdpDisabled",
+            "closeOnSelect": "=?"
         },
         link: {
             pre: function(scope, element, attrs, ngModel, $transclude) {
@@ -452,7 +461,8 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                     $mdpDatePicker(ngModel.$modelValue, {
                 	    minDate: scope.minDate, 
                 	    maxDate: scope.maxDate,
-                	    dateFilter: scope.dateFilter,
+                        dateFilter: scope.dateFilter,
+                	    closeOnSelect: scope.closeOnSelect,
                 	    targetEvent: ev
             	    }).then(updateDate);
                 };

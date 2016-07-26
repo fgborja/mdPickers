@@ -186,7 +186,7 @@ module.provider("$mdpDatePicker", function() {
                 template: '<md-dialog aria-label="" class="mdp-datepicker" ng-class="{ \'portrait\': !$mdMedia(\'gt-xs\') }">' +
                             '<md-dialog-content layout="row" layout-wrap>' +
                                 '<div layout="column" layout-align="start center">' +
-                                    '<md-toolbar layout-align="start start" flex class="mdp-datepicker-date-wrapper md-hue-1 md-primary" layout="column">' +
+                                    '<md-toolbar layout-align="start start" flex class="mdp-datepicker-date-wrapper md-primary" layout="column">' +
                                         '<span class="mdp-datepicker-year" ng-click="datepicker.showYear()" ng-class="{ \'active\': datepicker.selectingYear }">{{ datepicker.date.format(\'YYYY\') }}</span>' +
                                         '<span class="mdp-datepicker-date" ng-click="datepicker.showCalendar()" ng-class="{ \'active\': !datepicker.selectingYear }">{{ datepicker.date.format(datepicker.displayFormat) }}</span> ' +
                                     '</md-toolbar>' + 
@@ -199,11 +199,15 @@ module.provider("$mdpDatePicker", function() {
                                             '</div>' +
                                         '</md-virtual-repeat-container>' +
                                     '</div>' +
-                                    '<mdp-calendar ng-if="!datepicker.selectingYear" class="mdp-animation-zoom" date="datepicker.date" min-date="datepicker.minDate" date-filter="datepicker.dateFilter" max-date="datepicker.maxDate"></mdp-calendar>' +
+                                    '<mdp-calendar ng-if="!datepicker.selectingYear" class="mdp-animation-zoom" date="datepicker.date"' +
+                                                  'max-date="datepicker.maxDate"' +
+                                                  'min-date="datepicker.minDate"' +
+                                                  (options.closeOnSelect? 'close-on-select="datepicker.confirm()"':'')+
+                                                  'date-filter="datepicker.dateFilter"></mdp-calendar>' +
                                     '<md-dialog-actions layout="row">' +
                                     	'<span flex></span>' +
-                                        '<md-button ng-click="datepicker.cancel()" aria-label="' + LABEL_CANCEL + '">' + LABEL_CANCEL + '</md-button>' +
-                                        '<md-button ng-click="datepicker.confirm()" class="md-primary" aria-label="' + LABEL_OK + '">' + LABEL_OK + '</md-button>' +
+                                        (options.closeOnSelect? '' : '<md-button ng-click="datepicker.cancel()" aria-label="' + LABEL_CANCEL + '">' + LABEL_CANCEL + '</md-button>') +
+                                        (options.closeOnSelect? '' : '<md-button ng-click="datepicker.confirm()" class="md-primary" aria-label="' + LABEL_OK + '">' + LABEL_OK + '</md-button>') +
                                     '</md-dialog-actions>' +
                                 '</div>' +
                             '</md-dialog-content>' +
@@ -273,6 +277,9 @@ function CalendarCtrl($scope) {
     
     this.selectDate = function(dom) {
         self.date.date(dom);
+        if(self.closeOnSelect){
+            self.closeOnSelect()
+        }
     };
 
     this.nextMonth = function() {
@@ -302,7 +309,8 @@ module.directive("mdpCalendar", ["$animate", function($animate) {
             "date": "=",
             "minDate": "=",
             "maxDate": "=",
-            "dateFilter": "="
+            "dateFilter": "=",
+            "closeOnSelect": "&?"
         },
         template: '<div class="mdp-calendar">' +
                     '<div layout="row" layout-align="space-between center">' +
@@ -414,7 +422,8 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
             "placeholder": "@mdpPlaceholder",
             "noFloat": "=mdpNoFloat",
             "openOnClick": "=mdpOpenOnClick",
-            "disabled": "=?mdpDisabled"
+            "disabled": "=?mdpDisabled",
+            "closeOnSelect": "=?"
         },
         link: {
             pre: function(scope, element, attrs, ngModel, $transclude) {
@@ -513,7 +522,8 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                     $mdpDatePicker(ngModel.$modelValue, {
                 	    minDate: scope.minDate, 
                 	    maxDate: scope.maxDate,
-                	    dateFilter: scope.dateFilter,
+                        dateFilter: scope.dateFilter,
+                	    closeOnSelect: scope.closeOnSelect,
                 	    targetEvent: ev
             	    }).then(updateDate);
                 };
@@ -789,7 +799,7 @@ module.provider("$mdpTimePicker", function() {
                 clickOutsideToClose: true,
                 template: '<md-dialog aria-label="" class="mdp-timepicker" ng-class="{ \'portrait\': !$mdMedia(\'gt-xs\') }">' +
                             '<md-dialog-content layout-gt-xs="row" layout-wrap>' +
-                                '<md-toolbar layout-gt-xs="column" layout-xs="row" layout-align="center center" flex class="mdp-timepicker-time md-hue-1 md-primary">' +
+                                '<md-toolbar layout-gt-xs="column" layout-xs="row" layout-align="center center" flex class="mdp-timepicker-time md-primary">' +
                                     '<div class="mdp-timepicker-selected-time">' +
                                         '<span ng-class="{ \'active\': timepicker.currentView == timepicker.VIEW_HOURS }" ng-click="timepicker.currentView = timepicker.VIEW_HOURS">{{ timepicker.time.format("h") }}</span>:' + 
                                         '<span ng-class="{ \'active\': timepicker.currentView == timepicker.VIEW_MINUTES }" ng-click="timepicker.currentView = timepicker.VIEW_MINUTES">{{ timepicker.time.format("mm") }}</span>' +
