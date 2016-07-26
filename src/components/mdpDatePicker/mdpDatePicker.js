@@ -288,8 +288,8 @@ function formatValidator(value, format) {
 }
 
 function minDateValidator(value, format, minDate) {
-    var minDate = moment(minDate, "YYYY-MM-DD", true);
-    var date = angular.isDate(value) ? moment(value) :  moment(value, format, true);
+    var minDate = angular.isDate(minDate) ? minDate : moment(minDate, "YYYY-MM-DD", true);
+    var date = angular.isDate(value) ? moment(value) :  moment(value, format);
     
     return !value || 
             angular.isDate(value) || 
@@ -298,8 +298,8 @@ function minDateValidator(value, format, minDate) {
 }
 
 function maxDateValidator(value, format, maxDate) {
-    var maxDate = moment(maxDate, "YYYY-MM-DD", true);
-    var date = angular.isDate(value) ? moment(value) :  moment(value, format, true);
+    var maxDate = angular.isDate(maxDate) ? moment(maxDate) : moment(maxDate, "YYYY-MM-DD", true);
+    var date = angular.isDate(value) ? moment(value) :  moment(value, format);
     
     return !value || 
             angular.isDate(value) || 
