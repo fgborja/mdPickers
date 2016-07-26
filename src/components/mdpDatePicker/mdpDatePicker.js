@@ -198,6 +198,12 @@ function CalendarCtrl($scope) {
         return arr;
     };
     
+    this.showYear = function() {
+        if($scope.$parent.datepicker && $scope.$parent.datepicker.showYear){
+            $scope.$parent.datepicker.showYear();
+        }
+    }
+
     this.isDayEnabled = function(day) {
         return (!this.minDate || this.minDate <= day) && 
             (!this.maxDate || this.maxDate >= day) && 
@@ -240,7 +246,7 @@ module.directive("mdpCalendar", ["$animate", function($animate) {
         template: '<div class="mdp-calendar">' +
                     '<div layout="row" layout-align="space-between center">' +
                         '<md-button aria-label="previous month" class="md-icon-button" ng-click="calendar.prevMonth()"><md-icon md-svg-icon="mdp-chevron-left"></md-icon></md-button>' +
-                        '<div class="mdp-calendar-monthyear" ng-show="!calendar.animating">{{ calendar.date.format("MMMM") }} <span ng-click="showYear()">{{ calendar.date.format("YYYY") }}</span></div>' +
+                        '<div class="mdp-calendar-monthyear" ng-show="!calendar.animating">{{ calendar.date.format("MMMM") }} <span style="cursor:pointer" ng-click="calendar.showYear()">{{ calendar.date.format("YYYY") }}</span></div>' +
                         '<md-button aria-label="next month" class="md-icon-button" ng-click="calendar.nextMonth()"><md-icon md-svg-icon="mdp-chevron-right"></md-icon></md-button>' +
                     '</div>' +
                     '<div layout="row" layout-align="space-around center" class="mdp-calendar-week-days" ng-show="!calendar.animating">' +
