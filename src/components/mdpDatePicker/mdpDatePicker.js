@@ -434,6 +434,11 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                 
                 // update input element value
                 function updateInputElement(value) {
+                    if(value){
+                        var arr = value.match(/(\d{1,2})?\/?(\d{1,2})?\/?(\d{1,4})?/);
+                            arr = [arr[1],arr[2],arr[3]].filter(function(d){ return d != null; });
+                        value = arr.join('/');
+                    }
                     inputElement[0].value = value;
                     inputContainerCtrl.setHasValue(!ngModel.$isEmpty(value));
                 }
