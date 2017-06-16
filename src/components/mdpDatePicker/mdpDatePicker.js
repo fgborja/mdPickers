@@ -337,7 +337,7 @@ function requiredValidator(value, ngModel) {
 module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDatePicker, $timeout) {
     return  {
         restrict: 'E',
-        require: 'ngModel',
+        require: ['ngModel', "^?form"],
         transclude: true,
         template: function(element, attrs) {
             var noFloat = angular.isDefined(attrs.mdpNoFloat),
@@ -365,17 +365,24 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
             "closeOnSelect": "=?"
         },
         link: {
-            pre: function(scope, element, attrs, ngModel, $transclude) {
+            pre: function(scope, element, attrs, controllers, $transclude) {
                 
             },
-            post: function(scope, element, attrs, ngModel, $transclude) {
-                var inputElement = angular.element(element[0].querySelector('input')),
+            post: function(scope, element, attrs, controllers, $transclude) {
+                var ngModel = controllers[0],
+                    form    = controllers[1],
+                    inputElement = angular.element(element[0].querySelector('input')),
                     inputContainer = angular.element(element[0].querySelector('md-input-container')),
                     inputContainerCtrl = inputContainer.controller("mdInputContainer");
                     
                 $transclude(function(clone) {
                    inputContainer.append(clone); 
-                });  
+                });
+                
+                attrs.$observe('required', function(value) {
+                  var label = inputContainer.children('label');
+                  label && label.toggleClass('md-required', !!value);
+                });
                 
                 var messages = angular.element(inputContainer[0].querySelector("[ng-messages]"));
                 
@@ -384,7 +391,7 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                 scope.model = ngModel;
                 
                 scope.isError = function() {
-                    return !ngModel.$pristine && !!ngModel.$invalid;
+                    return !!ngModel.$invalid && (!ngModel.$pristine || (form && form.$submitted));
                 };
                 
                 // update input element if model has changed

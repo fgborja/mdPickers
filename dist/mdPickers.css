@@ -101,6 +101,7 @@
 .mdp-calendar-days {
   font-size: 1rem;
   max-width: 100%;
+  min-height: 192px;
 }
 .mdp-calendar-days .md-button,
 .mdp-calendar-days .mdp-day-placeholder {
