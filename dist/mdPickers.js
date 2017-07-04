@@ -550,6 +550,12 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                 scope.$on("$destroy", function() {
                     inputElement.off("reset input blur", onInputElementEvents);
                 });
+
+                // add scroll+focus capabilities to date picker
+                element.attr('tabindex', '-1');
+                element.focusin(function() {
+                    inputElement.focus();
+                });
             }
         }
     };
