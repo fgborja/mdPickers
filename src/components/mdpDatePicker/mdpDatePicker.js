@@ -349,12 +349,7 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                     '</md-button>' +
                     '<md-input-container' + (noFloat ? ' md-no-float' : '') + ' md-is-error="isError()">' +
                         '<label>{{placeholder}}</label>\
-                        <input type="{{ ::type }}"' + 
-                            (angular.isDefined(attrs.mdpDisabled) ? ' ng-disabled="disabled" ' : '') +
-                            'aria-label="{{placeholder}}" ' +
-                            (openOnClick ? 'ng-click="showPicker($event)" ' : '') +
-                            'ng-class={"ng-invalid":isError()}' +
-                        ' />' +
+                        <input type="{{ ::type }}"' + (angular.isDefined(attrs.mdpDisabled) ? ' ng-disabled="disabled"' : '') + ' aria-label="{{placeholder}}"' + (openOnClick ? ' ng-click="showPicker($event)" ' : '') + ' />' +
                     '</md-input-container>' +
                 '</div>';
         },
