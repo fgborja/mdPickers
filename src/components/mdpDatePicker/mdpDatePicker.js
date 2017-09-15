@@ -362,7 +362,8 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
             "noFloat": "=mdpNoFloat",
             "openOnClick": "=mdpOpenOnClick",
             "disabled": "=?mdpDisabled",
-            "closeOnSelect": "=?"
+            "closeOnSelect": "=?",
+            "isNumber": "=isNumber"
         },
         link: {
             pre: function(scope, element, attrs, controllers, $transclude) {
@@ -401,7 +402,27 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                         updateInputElement(date.format(scope.dateFormat));
                     else
                         updateInputElement(null);
+                    return value;
                 });
+
+                if (scope.isNumber) {
+                    ngModel.$parsers.push(function (viewValue) {
+                        if (viewValue instanceof Date && !isNaN(viewValue.valueOf())) {
+                            return viewValue.getTime();
+                        }
+                        return undefined;
+
+                    });
+                }
+
+                if (scope.isNumber) {
+                    ngModel.$formatters.push(function (modelValue) {
+                        if (isNaN(modelValue) === false) {
+                            return new Date(modelValue);
+                        }
+                        return modelValue;
+                    });
+                }
                 
                 ngModel.$validators.format = function(modelValue, viewValue) {
                     return formatValidator(viewValue, scope.dateFormat);
@@ -456,7 +477,7 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
     
                     if(value.isValid()) {
                         updateInputElement(strValue);
-                        ngModel.$setViewValue(strValue);
+                        ngModel.$setViewValue(value.toDate());
                     } else {
                         updateInputElement(date);
                         ngModel.$setViewValue(date);
@@ -470,7 +491,7 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                 }
                     
                 scope.showPicker = function(ev) {
-                    $mdpDatePicker(ngModel.$modelValue, {
+                    $mdpDatePicker(ngModel.$viewValue, {
                         minDate: scope.minDate, 
                         maxDate: scope.maxDate,
                         dateFilter: scope.dateFilter,
@@ -493,7 +514,8 @@ module.directive("mdpDatePicker", ["$mdpDatePicker", "$timeout", function($mdpDa
                 // add scroll+focus capabilities to date picker
                 element.attr('tabindex', '-1');
                 element.focusin(function() {
-                    inputElement.focus();
+                    // commented to avoid maximum call stack error
+                    // inputElement.focus();
                 });
             }
         }
